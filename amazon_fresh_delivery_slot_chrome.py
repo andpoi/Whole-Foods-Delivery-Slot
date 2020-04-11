@@ -29,7 +29,7 @@ def getWFSlot(productUrl):
       print("refreshed")
       html = driver.page_source
       soup = bs4.BeautifulSoup(html)
-      time.sleep(5)
+      time.sleep(10)
 
       #no_open_slots = "No doorstep delivery windows are available for"
       no_open_slots_text = "No delivery windows available. New windows are released throughout the day."
