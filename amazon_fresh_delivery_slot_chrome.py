@@ -1,8 +1,6 @@
 import bs4
-
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-
 import sys
 import time
 import os
@@ -30,7 +28,7 @@ def textAdmin(msg):
    print("text message to admin sent")
 
 def slack(msg):
-   os.system("curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"%s\"}' https://hooks.slack.com/services/<webhook link ending>" % msg)
+   os.system("curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"%s\"}' https://hooks.slack.com/services/webhook link ending" % msg)
    print('sent slack notification')
 
 def getWFSlot(productUrl):
@@ -42,7 +40,7 @@ def getWFSlot(productUrl):
    driver.get(productUrl)
    html = driver.page_source
    soup = bs4.BeautifulSoup(html)
-   slack("Starting search for %s" % (search_area))
+   #slack("Starting search for %s" % (search_area))
    textAdmin("Starting Amazon Fresh delivery slot search for %s" % (search_area))
    #text("Starting Amazon Fresh delivery slot search for %s" % (search_area))
    time.sleep(60)
@@ -82,15 +80,18 @@ def getWFSlot(productUrl):
             no_open_slots = False
             time.sleep(60)
       except NoSuchElementException:
-         print('SLOTS OPEN! by exception')
-         print('exception slot')
-         os.system('say "Slots for delivery opened!"')
-         #slack("Delivery slots are open for %s" % (search_area))
-         #text("Delivery slots are open for %s" % (search_area))
-         textAdmin("Delivery slots are open for %s" % (search_area))
-         no_open_slots = False
-         time.sleep(60)
-
+         if driver.current_url == productUrl:
+            print('SLOTS OPEN! by exception')
+            print('exception slot')
+            os.system('say "Slots for delivery opened!"')
+            #slack("Delivery slots are open for %s" % (search_area))
+            #text("Delivery slots are open for %s" % (search_area))
+            textAdmin("Delivery slots are open for %s" % (search_area))
+            no_open_slots = False
+            time.sleep(60)
+         else:
+            print('Exception and current_url isnt matching producturl')
+            driver.get(productUrl)
 
       try:
          open_slots = soup.find('div', class_ ='orderSlotExists').text()
